@@ -31,12 +31,29 @@ describe("GET /api/", () => {
         .get("/api/dfdfdfdf/")
         .expect(404)
         .then(({body}) => {
-        console.log(body)
-        
             expect(body.message).toBe(`No path found`)
         })
     })
 })
 
+describe("GET /api/", () => {
+    test("200 responds with an object of all the endpoints", () => {
+        return request(app)
+            .get('/api/')
+            .expect(200)
+            .then(({ body }) => { 
+              console.log(body)
+              const apiEndpointValues = Object.values(body.apiEndpoints)
+              apiEndpointValues.forEach((endpoint) => {
+                expect(endpoint).toHaveProperty("description", expect.any(String))
+                expect(endpoint).toHaveProperty("queries", expect.any(Array)) 
+            })
+            const apiEndpoints = Object.keys(body.apiEndpoints)
+              apiEndpoints.forEach((endpoint) => {
+                expect(endpoint).toEqual(expect.any(String))
+            })
+            })
+    }) 
+})
 
 
