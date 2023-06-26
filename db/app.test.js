@@ -23,8 +23,10 @@ describe("GET /api/topics", () => {
                     expect(topic).toHaveProperty("description", expect.any(String))
                 })
             })
-    })
-    test(`404: responds with bad request for an invalid treasures path`, () => {
+    }) 
+})
+describe("GET /api/", () => {
+    test(`404: responds with bad request for an invalid path`, () => {
         return request(app)
         .get("/api/dfdfdfdf/")
         .expect(404)
@@ -35,3 +37,6 @@ describe("GET /api/topics", () => {
         })
     })
 })
+
+
+
