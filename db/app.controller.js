@@ -15,7 +15,6 @@ exports.getAllTopics = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  console.log(req.params, "reqparams")
   selectArticles(req.params.article_id)
   .then((articles) => {
     console.log(articles, "articles")
