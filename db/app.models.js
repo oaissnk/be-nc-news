@@ -6,3 +6,20 @@ exports.selectAllTopics = () => {
   });  
 };
 
+exports.selectArticles = (id) => {
+let query = "SELECT * FROM articles"
+
+const queryValues = []
+
+if (id){
+  query += " WHERE article_id = $1";
+  queryValues.push(id)
+}
+  query += " ;"
+  return db.query(query, queryValues).then(({ rows }) => {
+    if( rows.length === 1) {
+      return rows[0]
+    }
+    return rows
+  });
+};
