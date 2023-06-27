@@ -3,6 +3,7 @@ const app = require("../db/app");
 const db = require("../db/index");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
+const endPointFile = require("../endpoints.json")
 
 beforeEach(() => {
 	return seed(data);
@@ -31,12 +32,20 @@ describe("GET /api/", () => {
         .get("/api/dfdfdfdf/")
         .expect(404)
         .then(({body}) => {
-        console.log(body)
-        
             expect(body.message).toBe(`No path found`)
         })
     })
 })
 
+describe("GET /api/", () => {
+    test("200 responds with an object of all the endpoints", () => {
+        return request(app)
+            .get('/api/')
+            .expect(200)
+            .then(({ body }) => {       
+        expect(body.apiEndpoints).toEqual(endPointFile)
+            })
+    }) 
+})
 
 

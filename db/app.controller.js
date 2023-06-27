@@ -1,7 +1,10 @@
 const { selectAllTopics } = require("./app.models");
-exports.getAPI = (_, res) => {
-  res.status(200).send({ message: "all ok" });
-};
+const  apiEndpoints  = require("../endpoints.json")
+
+
+exports.getApiEndpoints = (_, res) => {
+  res.status(200).send({ apiEndpoints })
+}
 
 exports.getAllTopics = (req, res) => {
   selectAllTopics()
