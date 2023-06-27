@@ -17,6 +17,9 @@ if (id){
 }
   query += " ;"
   return db.query(query, queryValues).then(({ rows }) => {
+    if( rows.length === 1) {
+      return rows[0]
+    }
     return rows
   });
 };

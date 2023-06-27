@@ -52,8 +52,7 @@ describe("GET /api/articles/:article_id", () => {
             .get('/api/articles/1')
             .expect(200)
             .then(({ body: {articles} }) => {
-                expect(articles).toHaveLength(1)
-                    expect(articles[0]).toEqual({
+                    expect(articles).toEqual({
                         article_id: 1,
                         title: "Living in the shadow of a great man",
                         topic: "mitch",
