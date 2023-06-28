@@ -1,4 +1,4 @@
-const { selectAllTopics, selectArticleById, selectArticles } = require("./app.models");
+const { selectAllTopics, selectArticles, selectCommentsByArticleId, selectArticleById } = require("./app.models");
 const  apiEndpoints  = require("../endpoints.json")
 
 
@@ -23,9 +23,12 @@ exports.getArticles = (req, res, next) => {
 }
 
 exports.getArticleById = (req, res, next) => {
+  if (isNaN(req.params.article_id)) {
+    return next({ status:400, message: "Invalid Article ID !"})
+  }
   selectArticleById(req.params.article_id)
-  .then((articles) => {
-    res.status(200).send( {articles })
+  .then((article) => {
+    res.status(200).send( {article} )
   })
   .catch(next)
 }
@@ -33,3 +36,17 @@ exports.getArticleById = (req, res, next) => {
 exports.routeNotFound = (req, res) => {
   res.status(404).send({ message: "No path found" });
 };
+
+exports.getCommentsByArticleId = (req, res, next) => {
+  if (isNaN(req.params.article_id)) {
+    return next({ status:400, message: "Invalid Article ID !"})
+  }
+  selectCommentsByArticleId(req.params.article_id)
+  .then((comments) => {
+    if (!comments.length ) {
+      return Promise.reject({ status:404, message: "No Comments Found"})
+    }
+    res.status(200).send( {comments} )
+  })
+  .catch(next)
+}

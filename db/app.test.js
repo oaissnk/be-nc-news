@@ -1,11 +1,10 @@
-require('jest-sorted');
+require("jest-sorted");
 const request = require("supertest");
 const app = require("../db/app");
 const db = require("../db/index");
 const seed = require("../db/seeds/seed");
 const data = require("../db/data/test-data");
 const endPointFile = require("../endpoints.json");
-
 
 beforeEach(() => {
   return seed(data);
@@ -53,8 +52,8 @@ describe("GET /api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then(({ body: { articles } }) => {
-        expect(articles).toEqual({
+      .then(({ body: { article } }) => {
+        expect(article).toEqual({
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
@@ -72,7 +71,41 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/wnfjn134")
       .expect(400)
       .then(({ body }) => {
-        expect(body.message).toBe(`Bad request`);
+        expect(body.message).toBe("Invalid Article ID !");
+      });
+  });
+});
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200 responds with the object of all comments from the article with the path of the article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+        });
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("404 responds with message No Comments Found", () => {
+    return request(app)
+      .get("/api/articles/14444/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("No Comments Found");
+      });
+  });
+  test("400 responds with message Invalid Article ID ", () => {
+    return request(app)
+      .get("/api/articles/sdfsfd/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid Article ID !");
       });
   });
 });
