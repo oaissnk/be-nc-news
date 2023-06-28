@@ -130,3 +130,19 @@ describe("GET /api/", () => {
       });
   });
 });
+describe.only("POST /api/articles/:article_id/comments", () => {
+  test("201 responds with a post which adds a comment for an article", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "rogersop", body: "soa4ever" })
+      .expect(201)
+      .then(({ body: {comment} }) => {
+        expect(comment.author).toBe("rogersop");
+        expect(comment.body).toBe("soa4ever");
+        expect(comment.article_id).toBe(1);
+        expect(comment.votes).toBe(0);
+        expect(comment).toHaveProperty("created_at", expect.any(String))
+      });
+  });
+});
+

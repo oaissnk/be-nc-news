@@ -1,4 +1,4 @@
-const { selectAllTopics, selectArticles, selectCommentsByArticleId, selectArticleById } = require("./app.models");
+const { selectAllTopics, selectArticles, selectCommentsByArticleId, selectArticleById, insertArticleComment} = require("./app.models");
 const  apiEndpoints  = require("../endpoints.json")
 
 
@@ -32,6 +32,14 @@ exports.getArticleById = (req, res, next) => {
   })
   .catch(next)
 }
+
+exports.addArticleComment = (req, res) => {
+  if (isNaN(req.params.article_id)) {
+    return next({ status:400, message: "Invalid Article ID !"})
+  }
+  insertArticleComment(req.body, req.params.article_id)
+    .then((comment) => res.status(201).send({ comment }));
+};
 
 exports.routeNotFound = (req, res) => {
   res.status(404).send({ message: "No path found" });
