@@ -100,6 +100,14 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.message).toBe("No Comments Found");
       });
   });
+  test("400 responds with message Invalid Article ID ", () => {
+    return request(app)
+      .get("/api/articles/sdfsfd/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid Article ID !");
+      });
+  });
 });
 describe("GET /api/", () => {
   test(`404: responds with bad request for an invalid path`, () => {

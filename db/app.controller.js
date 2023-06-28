@@ -38,9 +38,12 @@ exports.routeNotFound = (req, res) => {
 };
 
 exports.getCommentsByArticleId = (req, res, next) => {
+  if (isNaN(req.params.article_id)) {
+    return next({ status:400, message: "Invalid Article ID !"})
+  }
   selectCommentsByArticleId(req.params.article_id)
   .then((comments) => {
-    if (!comments.length) {
+    if (!comments.length ) {
       return Promise.reject({ status:404, message: "No Comments Found"})
     }
     res.status(200).send( {comments} )
