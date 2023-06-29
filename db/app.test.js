@@ -34,17 +34,17 @@ describe("GET /api/articles", () => {
       .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
         articles.forEach((article) => {
-            expect(article).toHaveProperty("title", expect.any(String))
-            expect(article).toHaveProperty("topic", expect.any(String))
-            expect(article).toHaveProperty("author", expect.any(String))
-            expect(article).toHaveProperty("created_at", expect.any(String))
-            expect(article).toHaveProperty("votes", expect.any(Number))
-            expect(article).toHaveProperty("article_img_url", expect.any(String))
-            expect(article).toHaveProperty("comment_count", expect.any(String))
-            expect(article).not.toHaveProperty("body", expect.any(String))
-        })
+          expect(article).toHaveProperty("title", expect.any(String));
+          expect(article).toHaveProperty("topic", expect.any(String));
+          expect(article).toHaveProperty("author", expect.any(String));
+          expect(article).toHaveProperty("created_at", expect.any(String));
+          expect(article).toHaveProperty("votes", expect.any(Number));
+          expect(article).toHaveProperty("article_img_url", expect.any(String));
+          expect(article).toHaveProperty("comment_count", expect.any(String));
+          expect(article).not.toHaveProperty("body", expect.any(String));
+        });
         expect(articles).toBeSortedBy("created_at", { descending: true });
-  });
+      });
   });
 });
 describe("GET /api/articles/:article_id", () => {
@@ -119,7 +119,6 @@ describe("GET /api/", () => {
       });
   });
 });
-
 describe("GET /api/", () => {
   test("200 responds with an object of all the endpoints", () => {
     return request(app)
@@ -136,13 +135,30 @@ describe("POST /api/articles/:article_id/comments", () => {
       .post("/api/articles/1/comments")
       .send({ username: "rogersop", body: "soa4ever" })
       .expect(201)
-      .then(({ body: {comment} }) => {
+      .then(({ body: { comment } }) => {
         expect(comment.author).toBe("rogersop");
         expect(comment.body).toBe("soa4ever");
         expect(comment.article_id).toBe(1);
         expect(comment.votes).toBe(0);
-        expect(comment).toHaveProperty("created_at", expect.any(String))
+        expect(comment).toHaveProperty("created_at", expect.any(String));
+      });
+  });
+  test("400 responds with message Invalid Article ID ", () => {
+    return request(app)
+      .post("/api/articles/sdfsfd/comments")
+      .expect(400)
+      .send({ username: "rogersop", body: "soa4ever" })
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid Article ID !");
+      });
+  });
+  test("400 responds with message Username not found ", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .expect(400)
+      .send({ username: "dfdfd", body: "soa4ever" })
+      .then(({ body }) => {
+        expect(body.message).toBe("Bad request !");
       });
   });
 });
-

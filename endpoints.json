@@ -29,7 +29,7 @@
   },
   "GET /api/articles/:article_id": {
     "description": "serves an object of a specific article, search for by its ID ",
-    "queries": ["not sure what type of queriers, i am assuming none?"],
+    "queries": [""],
     "exampleResponse": {
       "articles": [
         {
@@ -44,4 +44,5 @@
       ]
     }
   }
+
 }
