@@ -5,6 +5,7 @@ const {
   selectArticleById,
   insertArticleComment,
   updateArticleVotes,
+  deleteCommentById,
 } = require("./app.models");
 const apiEndpoints = require("../endpoints.json");
 
@@ -86,6 +87,23 @@ exports.patchArticleVotes = (req, res, next) => {
   updateArticleVotes(req.params.article_id, newVote)
     .then((article) => {
       res.status(200).send({ article });
+    })
+    .catch(next);
+};
+
+exports.removeCommentById = (req, res, next) => {
+  if (isNaN(req.params.comment_id)) {
+    return next({ status: 400, message: "Comment ID must be a number" });
+  }
+  const commentId = req.params.comment_id;
+  deleteCommentById(commentId)
+    .then((result) => {
+      if (result.rowCount === 0) {
+        return next({ status: 404, message: "Comment does not exist" });
+      }
+    })
+    .then(() => {
+      res.status(204).send({});
     })
     .catch(next);
 };

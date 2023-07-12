@@ -218,16 +218,16 @@ describe("GET /api/", () => {
 });
 describe("PATCH /api/articles/:article_id", () => {
   test("200 responds with an updated vote count on an article ", () => {
-    const votesBeforePatch = data.articleData[0].votes
+    const votesBeforePatch = data.articleData[0].votes;
     return request(app)
       .patch("/api/articles/1")
       .expect(200)
       .send({ inc_votes: 5 })
-      .then(({ body: {article} }) => {
+      .then(({ body: { article } }) => {
         expect(article.votes).toBe(votesBeforePatch + 5);
         expect(article).toHaveProperty("votes", expect.any(Number));
       });
-  })
+  });
   test("400 responds with message Invalid Article ID ", () => {
     return request(app)
       .patch("/api/articles/sdfsfd")
@@ -236,7 +236,7 @@ describe("PATCH /api/articles/:article_id", () => {
       .then(({ body }) => {
         expect(body.message).toBe("Invalid Article ID !");
       });
-  })
+  });
   test("400 responds with message inc_votes must be a number", () => {
     return request(app)
       .patch("/api/articles/1")
@@ -253,6 +253,27 @@ describe("PATCH /api/articles/:article_id", () => {
       .send({ fdnjdfn: 4 })
       .then(({ body }) => {
         expect(body.message).toBe("body must include inc_votes");
+      });
+  });
+});
+describe.only("DELETE /api/comments/:comment_id", () => {
+  test("204 responds with no content ", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("404 responds with message comment does not exist", () => {
+    return request(app)
+      .delete("/api/comments/14444")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment does not exist");
+      });
+  });
+  test("404 responds with message comment does not exist ", () => {
+    return request(app)
+      .delete("/api/comments/erett")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Comment ID must be a number");
       });
   });
 });

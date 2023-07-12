@@ -66,3 +66,10 @@ exports.updateArticleVotes = (articleID, newVote) => {
   ).then(({rows}) => rows[0]
 )}
 
+exports.deleteCommentById = (commentID) => {
+  return db.query(
+    `DELETE FROM comments WHERE comment_id = $1;`,
+    [commentID]
+  )
+  .then(result => result)
+}
