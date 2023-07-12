@@ -4,6 +4,7 @@ const {
   selectCommentsByArticleId,
   selectArticleById,
   insertArticleComment,
+  updateArticleVotes,
 } = require("./app.models");
 const apiEndpoints = require("../endpoints.json");
 
@@ -43,10 +44,10 @@ exports.addArticleComment = (req, res, next) => {
     return next({ status: 400, message: "Invalid Article ID !" });
   }
   insertArticleComment(req.body, req.params.article_id)
-  .then((comment) => {
-    res.status(201).send({ comment });
+    .then((comment) => {
+      res.status(201).send({ comment });
     })
-  .catch(next);
+    .catch(next);
 };
 
 exports.routeNotFound = (req, res) => {
@@ -63,6 +64,28 @@ exports.getCommentsByArticleId = (req, res, next) => {
         return Promise.reject({ status: 404, message: "No Comments Found" });
       }
       res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
+exports.patchArticleVotes = (req, res, next) => {
+  if (isNaN(req.params.article_id)) {
+    return next({ status: 400, message: "Invalid Article ID !" });
+  }
+
+  const newVote = req.body.inc_votes;
+
+  if (newVote === undefined) {
+    return next({ status: 400, message: "body must include inc_votes" });
+  }
+
+  if (isNaN(newVote)) {
+    return next({ status: 400, message: "inc_votes must be a number" });
+  }
+
+  updateArticleVotes(req.params.article_id, newVote)
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 };

@@ -14,6 +14,7 @@ const {
   getCommentsByArticleId,
   getArticleById,
   addArticleComment,
+  patchArticleVotes,
 } = require("./app.controller");
 
 //EndPoints
@@ -25,6 +26,8 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", addArticleComment);
+// Votes
+app.patch("/api/articles/:article_id", patchArticleVotes);
 //Errors
 app.all("*", routeNotFound);
 app.use(handlePsqlErrors);

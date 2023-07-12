@@ -1,15 +1,8 @@
-const articles = require("./data/test-data/articles");
+
 const db = require("./index");
 
 
-const checkExists = (articleID) => {
-  const queryStr = ("SELECT * FROM articles WHERE article_id = $1");
-  return db
-  .query(queryStr, [articleID])
-  .then(({rows}) => { if (rows.length === 0) 
-    return Promise.reject({ status: 400, msg: "Invalid Article ID !" });
-  })
-}
+
 
 exports.selectAllTopics = () => {
   return db.query(`SELECT * FROM topics;`).then(({ rows }) => {
@@ -53,18 +46,6 @@ exports.selectArticles = () => {
 };
 
 exports.insertArticleComment = (newComment, articleID) => {
-  const { username, body } = newComment;
-  return db
-    .query(
-      "INSERT INTO comments (author, body, article_id) VALUES ($1, $2, $3) RETURNING *;",
-      [username, body, articleID]
-    )
-    .then(({ rows }) => rows[0]
-    );
-};
-
-
-  exports.insertArticleComment = async (newComment, articleID) => {
     const { username, body } = newComment;
     return db
       .query(
@@ -74,4 +55,14 @@ exports.insertArticleComment = (newComment, articleID) => {
       .then(({ rows }) => rows[0]
       );
   };
+
+exports.updateArticleVotes = (articleID, newVote) => {
+  return db.query(
+    `UPDATE articles 
+    SET votes = votes + $1
+    WHERE article_id = $2
+    RETURNING votes;`,
+    [newVote, articleID]
+  ).then(({rows}) => rows[0]
+)}
 
