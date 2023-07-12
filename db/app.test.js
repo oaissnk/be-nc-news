@@ -162,3 +162,97 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200 responds with the object of all comments from the article with the path of the article id", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        comments.forEach((comment) => {
+          expect(comment).toHaveProperty("comment_id", expect.any(Number));
+          expect(comment).toHaveProperty("body", expect.any(String));
+          expect(comment).toHaveProperty("votes", expect.any(Number));
+          expect(comment).toHaveProperty("author", expect.any(String));
+          expect(comment).toHaveProperty("article_id", expect.any(Number));
+          expect(comment).toHaveProperty("created_at", expect.any(String));
+        });
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("404 responds with message No Comments Found", () => {
+    return request(app)
+      .get("/api/articles/14444/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe("No Comments Found");
+      });
+  });
+  test("400 responds with message Invalid Article ID ", () => {
+    return request(app)
+      .get("/api/articles/sdfsfd/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid Article ID !");
+      });
+  });
+});
+describe("GET /api/", () => {
+  test(`404: responds with bad request for an invalid path`, () => {
+    return request(app)
+      .get("/api/dfdfdfdf/")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.message).toBe(`No path found`);
+      });
+  });
+});
+describe("GET /api/", () => {
+  test("200 responds with an object of all the endpoints", () => {
+    return request(app)
+      .get("/api/")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.apiEndpoints).toEqual(endPointFile);
+      });
+  });
+});
+describe("PATCH /api/articles/:article_id", () => {
+  test("200 responds with an updated vote count on an article ", () => {
+    const votesBeforePatch = data.articleData[0].votes
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(200)
+      .send({ inc_votes: 5 })
+      .then(({ body: {article} }) => {
+        expect(article.votes).toBe(votesBeforePatch + 5);
+        expect(article).toHaveProperty("votes", expect.any(Number));
+      });
+  })
+  test("400 responds with message Invalid Article ID ", () => {
+    return request(app)
+      .patch("/api/articles/sdfsfd")
+      .expect(400)
+      .send({ inc_votes: 5 })
+      .then(({ body }) => {
+        expect(body.message).toBe("Invalid Article ID !");
+      });
+  })
+  test("400 responds with message inc_votes must be a number", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(400)
+      .send({ inc_votes: "fff" })
+      .then(({ body }) => {
+        expect(body.message).toBe("inc_votes must be a number");
+      });
+  });
+  test("400 responds with message body must include inc_votes", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .expect(400)
+      .send({ fdnjdfn: 4 })
+      .then(({ body }) => {
+        expect(body.message).toBe("body must include inc_votes");
+      });
+  });
+});
